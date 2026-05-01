@@ -41,7 +41,7 @@ dotnet run
 ## Проверка логов
 Для каждого запроса в логе есть:
 
-- requestId
+- requestId приходит в заголовке X-Request-Id (его можно сопоставить с логом)
 - timeMs
 - status
 
@@ -70,6 +70,7 @@ Invoke-RestMethod "https://localhost:54254/api/items?name=note&minPrice=100&maxP
 Invoke-RestMethod "https://localhost:54254/api/items/00000000-0000-0000-0000-000000000000"
 ```
 
+
 > Примечание: если HTTPS не доверен, используйте http://localhost:54255 или выполните:
 > ```
 > `dotnet dev-certs https --trust`
@@ -84,6 +85,8 @@ Invoke-RestMethod "https://localhost:54254/api/items/00000000-0000-0000-0000-000
 - Тело ~15 KB (15069 байт) → среднее timeMs ≈ 2.4
 
 Вывод: после прогрева среднее время отличается незначительно; рост размера тела в пределах лимита не приводит к резкому росту времени обработки.
+
+Примечание: данные сняты из логов TimingAndLogMiddleware.
 
 ## Архитектурное пояснение
 Маршруты отвечают только за бизнес-операции (CRUD).
