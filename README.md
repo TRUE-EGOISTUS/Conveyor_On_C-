@@ -71,14 +71,27 @@ Invoke-RestMethod "https://localhost:54254/api/items/00000000-0000-0000-0000-000
 ```
 
 
-> Примечание: если HTTPS не доверен, используйте http://localhost:54255 или выполните:
-> ```
-> `dotnet dev-certs https --trust`
-> ```
 
 ## Экспериментальная часть
 Независимая переменная: размер тела запроса (в пределах лимита 20 KB).  
 Зависимая переменная: `timeMs` из логов.
+
+Для этой проверки мы использовали следующие комманды:
+1. ``` 
+1..10 | ForEach-Object {                                                                           
+     $body = @{ name = "NoteSmall$_"; price = 10; padding = $padding } | ConvertTo-Json                                                                   
+     Invoke-RestMethod http://localhost:54255/api/items -Method Post -ContentType "application/json" -Body $body | Out-Null
+```
+Эта команда создаёт небольшой цикл, в котором делается 10 прогонов, где создаётся запрос размером в 1КБ
+
+2. 
+```
+ 1..10 | ForEach-Object {                                                                           
+     $body = @{ name = "NoteBig$_"; price = 10; padding = $padding } | ConvertTo-Json                                                                     
+     Invoke-RestMethod http://localhost:54255/api/items -Method Post -ContentType "application/json" -Body $body | Out-Null
+}
+```
+Эта команда создаёт небольшой цикл, в котором делается 10 прогонов, где создаётся запрос размером уже в 15КБ
 
 Измерения (10 прогонов):
 - Тело ~1 KB (971 байт) → среднее timeMs ≈ 2.2
